@@ -44,85 +44,62 @@ namespace Tree {
     }
 
     BINode *randTree() {
-        auto *root = new BINode(int(rnd()) % 100);
-        auto *stack = Stack::emptyStack<BINode *>();
-
-        Stack::push(stack, root);
-
-        while (!Stack::isEmpty(stack)) {
-            BINode *top = Stack::pop(stack);
-            if (rnd() % 10 < 5) {
-                top->left = new BINode(int(rnd()) % top->data);
-                Stack::push(stack, top->left);
-            }
-            if (rnd() % 10 < 5) {
-                top->right = new BINode(top->data);
-                Stack::push(stack, top->right);
-            }
+        int size = rnd() % 10;
+        int *data = new int[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = rnd() % 100;
         }
 
-        return root;
+        return BST(data, size);
     }
 
     template<typename T>
     void preorder(BNode<T> *p) {
         auto *stack = Stack::emptyStack<BNode<T> *>();
-        Stack::push(stack, p);
-        while (!Stack::isEmpty(stack)) {
-            auto *top = Stack::pop(stack);
-            std::cout << top->data << " ";
-            if (top->right) {
-                Stack::push(stack, top->right);
+
+        while (!Stack::isEmpty(stack) || p) {
+            while (p) {
+                Stack::push(stack, p);
+                std::cout << p << ' ';
+                p = p->left;
             }
-            if (top->left) {
-                Stack::push(stack, top->left);
-            }
+            p = Stack::pop(stack);
+            p = p->right;
         }
     }
 
     template<typename T>
     void inorder(BNode<T> *p) {
         auto *stack = Stack::emptyStack<BNode<T> *>();
-        auto *wait = Stack::emptyStack<BNode<T> *>();
-        Stack::push(stack, p);
 
-        while (!Stack::isEmpty(stack) || !Stack::isEmpty(wait)) {
-            if (!Stack::isEmpty(stack)) {
-                auto *top = Stack::pop(stack);
-                Stack::push(wait, top);
-                if (top->left) {
-                    Stack::push(stack, top->left);
-                }
-            } else {
-                auto *top = Stack::pop(wait);
-                std::cout << top->data << " ";
-                if (top->right) {
-                    Stack::push(stack, top->right);
-                }
+        while (!Stack::isEmpty(stack) || p) {
+            while (p) {
+                Stack::push(stack, p);
+                p = p->left;
             }
+            p = Stack::pop(stack);
+            std::cout << p << ' ';
+            p = p->right;
         }
     }
 
     template<typename T>
     void postorder(BNode<T> *p) {
         auto *stack = Stack::emptyStack<BNode<T> *>();
-        auto *wait = Stack::emptyStack<BNode<T> *>();
-        Stack::push(stack, p);
 
-        while (!Stack::isEmpty(stack)) {
-            if (Stack::top(stack) == Stack::top(wait)) {
-                    std::cout << Stack::pop(stack) << ' ';
-                    Stack::pop(wait);
+        while (!Stack::isEmpty(stack) || p) {
+            if (p) {
+                Stack::push(stack, p);
+                p = p->left;
             } else {
-                auto *top = Stack::top(stack);
-                Stack::push(wait, top);
-
-                if (top->right) {
-                    Stack::push(stack, top->right);
+                while (!Stack::isEmpty(stack) && Stack::top(stack)->right == p) {
+                    p = Stack::pop(stack);
+                    std::cout << p << ' ';
                 }
-
-                if (top->left) {
-                    Stack::push(stack, top->left);
+                if (!Stack::isEmpty(stack)) {
+                    p = Stack::top(stack)->right;
+                } else {
+                    p = nullptr;
                 }
             }
         }
