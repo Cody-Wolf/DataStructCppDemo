@@ -99,7 +99,7 @@ namespace Tree {
                 if (!Stack::isEmpty(stack)) {
                     p = Stack::top(stack)->right;
                 } else {
-                    p = nullptr;
+                    p = 0;
                 }
             }
         }
